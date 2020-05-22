@@ -3,3 +3,12 @@ export interface Cat {
   readonly age: number;
   readonly breed: string;
 }
+
+
+
+export interface CreateCatRequest {
+  name: string;
+  age: number;
+  breed: string;
+}
+

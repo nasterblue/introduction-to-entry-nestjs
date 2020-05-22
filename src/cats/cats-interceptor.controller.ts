@@ -1,14 +1,14 @@
 import {
-  Inject,
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  Inject,
   Param,
   Post,
-  UseGuards,
-  UseFilters,
-  ForbiddenException,
   Req,
+  UseFilters,
+  UseGuards,
   UseInterceptors
 } from '@nestjs/common';
 import {Roles} from '../common/decorators/roles.decorator';
@@ -17,9 +17,10 @@ import {HttpExceptionFilter} from '../common/filters/http-exception.filter';
 import {TimeoutInterceptor} from '../common/interceptors/timeout.interceptor';
 // import {CatsService} from './cats.service';
 import {CatsOrmService} from './cats.orm.service';
-import {CreateCatDto} from './dto/create-cat.dto';
-import {Cat} from './interfaces/cat.interface';
+import {CatBreed, CreateCatDto} from './dto/create-cat.dto';
+import {Cat, CreateCatRequest} from './interfaces/cat.interface';
 import {ApiTags} from '@nestjs/swagger';
+import * as faker from 'faker';
 
 @UseGuards(RolesGuard)
 @UseFilters(HttpExceptionFilter)
@@ -66,4 +67,20 @@ export class CatsIntercepterController {
     await this.setTimeout();
     throw new ForbiddenException('Can not access');
   }
+
+  @Get('/seedDB/:total')
+  async seedDB(@Param('total') total: number): Promise<any> {
+    for (let i = 0; i < total; i++) {
+      await this.catsService.create(this.randomCat());
+    }
+  }
+
+  private randomCat(): CreateCatRequest {
+    return {
+      name: faker.name.firstName(),
+      age: Math.floor((Math.random() * 10) + 1),
+      breed: Math.floor((Math.random() * 10)) % 2 === 0 ? CatBreed.male : CatBreed.female
+    };
+  }
+
 }

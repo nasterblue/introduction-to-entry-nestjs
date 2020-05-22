@@ -1,8 +1,9 @@
 import {Body, Controller, ForbiddenException, Get, Inject, Param, Post, UseFilters} from '@nestjs/common';
 import {HttpExceptionFilter} from '../common/filters/http-exception.filter';
 import {CatsOrmService} from './cats.orm.service';
-import {CreateCatDto} from './dto/create-cat.dto';
-import {Cat} from './interfaces/cat.interface';
+import {CatBreed, CreateCatDto} from './dto/create-cat.dto';
+import * as faker from 'faker';
+import {Cat, CreateCatRequest} from './interfaces/cat.interface';
 import {ApiTags} from '@nestjs/swagger';
 
 @UseFilters(HttpExceptionFilter)
@@ -33,4 +34,21 @@ export class CatsController {
   async throwError(): Promise<any> {
     throw new ForbiddenException('Can not access');
   }
+
+  @Get('/seedDB/:total')
+  async seedDB(@Param('total') total: number): Promise<any> {
+    for (let i = 0; i < total; i++) {
+      await this.catsService.create(this.randomCat());
+    }
+  }
+
+  private randomCat(): CreateCatRequest {
+    return {
+      name: faker.name.firstName(),
+      age: Math.floor((Math.random() * 10) + 1),
+      breed: Math.floor((Math.random() * 10)) % 2 === 0 ? CatBreed.male : CatBreed.female
+    };
+  }
+
+
 }

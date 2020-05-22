@@ -1,4 +1,4 @@
-import {Module, NestModule, MiddlewareConsumer} from '@nestjs/common';
+import {MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {CatsController} from './cats.controller';
 import {CatsSecuredController} from './cats-secured.controller';
